@@ -23,8 +23,9 @@ __pycache__/
 .DS_Store
 Thumbs.db
 
-# Ignora tutto nella cartella data/
+# Ignora tutto nella cartella data/ e aquisizioni/
 data/*
+acquisizioni/*.txt
 
 # Tranne lista_porti.csv
 !data/lista_porti.csv
