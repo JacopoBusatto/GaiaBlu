@@ -18,13 +18,12 @@ def ora_locale():
     return datetime.now().astimezone()
 
 def aspetta_minuto_zero():
-    #start_with_latency = START_MINUTE - acs_latency
-    #if start_with_latency < 0:
+    target_minute = (START_MINUTE - ACS_LATENCY) % 60
     while True:
         now = ora_locale()
-        if now.minute == START_MINUTE: # - acs_latency:
+        if now.minute == target_minute:
+            # print(f"[{now:%H:%M:%S}] Raggiunto minuto di start anticipato per latenza ACS ({ACS_LATENCY} min).", flush=True)
             return
-        # print(f"[{now:%H:%M:%S}] Attesa inizio acquisizione (minuto {START_MINUTE:02d})...")
         time.sleep(5)
 
 def main():

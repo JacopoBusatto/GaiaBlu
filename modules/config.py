@@ -15,16 +15,16 @@ TRY_DELAY = 0.05
 ACS_LATENCY = 1
 
 # Durata del ciclo di acquisizione oraria (minuti)
-ACQUISITION_LENGTH = 15+ACS_LATENCY
+ACQUISITION_LENGTH = 15
 
 # Minuto dell'ora in cui inizia l'acquisizione (minuti)
 START_MINUTE       = 00
 
 # Minuto dallo start in cui viene attivata la valvola (minuti)
-FILTER_ON_MINUTE   = 5+ACS_LATENCY
+FILTER_ON_MINUTE   = 5
 
 # Minuto dallo start in cui viene disattivata la valvola (minuti)
-FILTER_OFF_MINUTE  = 10+ACS_LATENCY
+FILTER_OFF_MINUTE  = 10
 
 # Path dell'eseguibile per controllo valvola
 RELAY_PATH         = "C:/Users/ridopoco/IOPs/USBRelay.exe"
