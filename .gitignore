@@ -1,0 +1,30 @@
+# Ignora file di backup temporanei
+*~
+
+# Ignora cartella delle acquisizioni
+aquisizioni/
+
+# Ignora cartelle __pycache__ generate da Python
+__pycache__/
+**/__pycache__/
+
+# Ignora file compilati di Python
+*.pyc
+*.pyo
+*.pyd
+
+# Ignora file di log e temporanei
+*.log
+*.tmp
+*.bak
+
+# (Opzionale) Ignora file di configurazione locali
+.env
+.DS_Store
+Thumbs.db
+
+# Ignora tutto nella cartella data/
+data/*
+
+# Tranne lista_porti.csv
+!data/lista_porti.csv
