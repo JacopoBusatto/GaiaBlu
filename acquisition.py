@@ -38,13 +38,13 @@ def main():
             try:
                 dati_flux = get_flux_data()
                 flusso = dati_flux.get("FLOWIN")
-                if flusso is not None and flusso > 0:
-                    break  # uscita anticipata se il flusso è valido
+                if flusso is not None and flusso > -1:
+                    break  # uscita anticipata se il flusso e' valido
             except Exception as e:
                 print(f"[{ora_locale():%H:%M:%S}] [CHECK] Errore lettura flusso (tentativo {i+1}): {e}", flush=True)
             time.sleep(TRY_DELAY)
 
-        if flusso is None or flusso <= 0:
+        if flusso is None or flusso <= -1:
             print(f" [CHECK] Flusso assente ({flusso}), acquisizione saltata.", flush=True)
             time.sleep(120)
             continue
@@ -118,7 +118,7 @@ def main():
         os.system(f"{RELAY_PATH} {FILTER_OFF}")
         os.system(f"{SOCKET_PATH} close {PRESA_ACS}")
         
-        print(f"[END] Acquisizione terminata. In attesa del prossimo ciclo...\n", flush = True)
+        print(f"[END] Acquisizione terminata. In attesa del prossimo ciclo...", flush = True)
         
 if __name__ == "__main__":
     main()

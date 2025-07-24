@@ -76,6 +76,7 @@ def plot_loop():
         # === Finestra a tutto schermo ===
         plt.ion()
         plt.rcParams['toolbar'] = 'none'
+        plt.close("all")  # Chiude tutte le finestre precedenti
         fig, axs = plt.subplots(2, 2, figsize=(14, 7))
         fig.canvas.manager.set_window_title("Visualizzazione ACS")
         fig.subplots_adjust(wspace=0.3, hspace=0.4)
@@ -95,7 +96,7 @@ def plot_loop():
 
         while True:
             if not os.path.exists(file_path):
-                print("[AVVISO] Il file non esiste più.")
+                print("[AVVISO] Il file non esiste piu.")
                 break
 
             # === Timeout se file non cresce ===
@@ -172,4 +173,9 @@ def plot_loop():
                 time.sleep(REFRESH_INTERVAL_PLOT)
 
 if __name__ == "__main__":
-    plot_loop()
+    try:
+        plot_loop()
+    except KeyboardInterrupt:
+        pass  # Interruzione manuale: non stampare nulla
+    except Exception as e:
+        print(f"[PLOT] Errore inatteso: {type(e).__name__}: {e}")
