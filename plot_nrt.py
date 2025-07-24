@@ -165,12 +165,11 @@ def plot_loop():
                 plt.pause(0.5)
 
             except Exception as e:
+                if isinstance(e, (KeyboardInterrupt, RuntimeError)):
+                    # Silenzia errori dovuti a chiusura forzata (es. da manager)
+                    break
                 print(f"[ERRORE plot] {type(e).__name__}: {e}")
-
-            time.sleep(REFRESH_INTERVAL_PLOT)
-
-
-
+                time.sleep(REFRESH_INTERVAL_PLOT)
 
 if __name__ == "__main__":
     plot_loop()

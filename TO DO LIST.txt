@@ -12,3 +12,4 @@ FATTO 	3.1 scaricare land-sea mask
 5) controllo nel manager del tempo: SE START MINUTE è 50 e acquisisco per 15 mins, allora il tempo massimo è minore e non funziona il check acquisizione
 6) tempi di invecchiamento del filtro
 END) al termine dell'acquisizione, spostare pc in server room
+SE SALTA LAQUISIZIONE PER IL FLUSSO, PUO LEGGERE DA GPS non da file
