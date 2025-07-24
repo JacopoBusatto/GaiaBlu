@@ -75,7 +75,7 @@ def manager_loop():
         while True:
             # === Acquisizione posizione ===
             if is_acquiring():
-                log("manager", "Fase di acquisizione. Leggo da file output...")
+                # log("manager", "Fase di acquisizione. Leggo da file output...")
                 path = get_last_output_file()
                 if not path:
                     log("manager", "Nessun file trovato.")
@@ -88,7 +88,7 @@ def manager_loop():
                     continue
                 lat, lon = pos
             else:
-                log("manager", "Fase di attesa. Leggo da GPS...")
+                # log("manager", "Fase di attesa. Leggo da GPS...")
                 gps = get_gps_data()
                 lat, lon = gps.get("LAT"), gps.get("LON")
 
