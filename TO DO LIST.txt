@@ -13,3 +13,6 @@ FATTO 5) controllo nel manager del tempo: SE START MINUTE è 50 e acquisisco per
 6) tempi di invecchiamento del filtro
 END) al termine dell'acquisizione, spostare pc in server room
 SE SALTA LAQUISIZIONE PER IL FLUSSO, PUO LEGGERE DA GPS non da file
+
+
+Se la distanza è sempre la stessa, smette di mandare il messaggio di soglia minima non souperata
