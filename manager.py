@@ -70,7 +70,7 @@ def stream_logs(process, name):
 def manager_loop():
     proc_acquisition = None
     proc_plot = None
-
+    old_distance = None
     try:
         while True:
             # === Acquisizione posizione ===
@@ -117,7 +117,9 @@ def manager_loop():
 
             elif distanza >= SOGLIA_NM:
                 if (not proc_acquisition) or (proc_acquisition.poll() is not None):
-                    log("manager", f"Distanza dal porto di {porto} adeguata: {distanza} NM\nAccendo ACS e avvio acquisizione.")
+                    if distanza != old_distance:
+                        log("manager", f"Distanza dal porto di {porto} adeguata: {distanza} NM")
+                        log("manager",  "Accendo ACS e avvio acquisizione.")
                     os.system(f"{SOCKET_PATH} open {PRESA_FLUX}")
                     # os.system(f"{SOCKET_PATH} open {PRESA_ACS}")
                     time.sleep(2)
@@ -129,7 +131,7 @@ def manager_loop():
                 if (not proc_plot) or (proc_plot.poll() is not None):
                     proc_plot = start_plot()
                     threading.Thread(target=stream_logs, args=(proc_plot, "plot"), daemon=True).start()
-
+            old_distance = distanza
             time.sleep(CHECK_INTERVAL)
 
     except KeyboardInterrupt:
