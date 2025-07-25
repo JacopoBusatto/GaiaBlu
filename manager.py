@@ -117,7 +117,7 @@ def manager_loop():
 
             elif distanza >= SOGLIA_NM:
                 if (not proc_acquisition) or (proc_acquisition.poll() is not None):
-                    if distanza != old_distance:
+                    if round(distanza,1) != old_distance:
                         log("manager", f"Distanza dal porto di {porto} adeguata: {distanza} NM")
                         log("manager",  "Accendo ACS e avvio acquisizione.")
                     os.system(f"{SOCKET_PATH} open {PRESA_FLUX}")
@@ -131,7 +131,7 @@ def manager_loop():
                 if (not proc_plot) or (proc_plot.poll() is not None):
                     proc_plot = start_plot()
                     threading.Thread(target=stream_logs, args=(proc_plot, "plot"), daemon=True).start()
-            old_distance = distanza
+            old_distance = round(distanza,1)
             time.sleep(CHECK_INTERVAL)
 
     except KeyboardInterrupt:
