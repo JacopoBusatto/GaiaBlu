@@ -43,7 +43,7 @@ Ogni modulo fornisce `open_port()`, `read_data()`, `close_port()`.
 | `logger_utils.py` | Log con colori per manager / plot / acquisition / errori |
 | `writer.py` | Scrive file output con intestazione IDL e dati da tutti gli strumenti |
 | `read_*_data.py` | Wrapper per parsing dei dati letti da ciascun strumento |
-| `config.py` | Parametri configurabili del sistema (es. porta ACS, durata acquisizione, path) |
+| `config.py` | Parametri configurabili del sistema |
 | `distance_to_nearest_port.py` | Calcola distanza in NM dal porto più vicino (usato da `manager.py`) |
 
 ---
@@ -53,7 +53,7 @@ Ogni modulo fornisce `open_port()`, `read_data()`, `close_port()`.
 ### 📉 Pacchetti Python
 
 ```bash
-pip install pandas matplotlib numpy pyserial colorama geopy
+mamba install pandas matplotlib numpy pyserial colorama geopy
 ```
 
 ### 🔧 Librerie speciali
@@ -65,79 +65,45 @@ pip install pandas matplotlib numpy pyserial colorama geopy
 ---
 
 ## ▶️ Uso
-
-### 1. Avvio sistema completo
-
-```bash
-python manager.py
-```
-
+```manager.py```
 Esegue automaticamente:
 - verifica distanza dalla costa;
 - accensione prese;
 - avvio acquisizione dati e plotting;
 - spegnimento se troppo vicini a un porto.
 
-### 2. Avvio manuale (debug)
+```bash
+python manager.py  # avvio automatico completo
+```
+
+oppure, in modalità debug:
 
 ```bash
 python acquisition.py
 python plot_nrt.py
 ```
 
-### 3. Controllo porti (una tantum)
-
-```bash
-python checkports.py
-```
-
 ---
 
 ## 🗒️ Esempio file di output
 
-```txt
-/begin_header 
-/IOPs FlowThrough System onboard R/V Gaia Blu 
-/DATE  = YYYYMMDD 
-/TIME  = decimal hours [hh.decimals] 
-/LAT   = degrees north [deg.decimals] 
-/LON   = degrees east [deg.decimals] 
+```
+/begin_header
 ...
 /end_header@
-DATE,TIME,GPS_TIME,LAT,LON,FLOWIN,FLOWOUT,TEMP1,TEMP2,SAL,...
-20250723,18.567,2025-07-23T18:34:00,41.9057,12.4956,1.23,1.20,23.5,25.1,38.2,...
+DATE,TIME,GPS_TIME,LAT,LON,FLOWIN,FLOWOUT,...
 ```
 
 ---
 
 ## 🚢 Contesto operativo
 
-Progetto operativo a bordo della **nave da ricerca GAIA BLU** (CNR-ISMAR). Il sistema consente:
-- acquisizione continua senza supervisione;
-- protezione strumenti in prossimità della costa;
-- visualizzazione live per validazione a bordo.
+Progetto operativo a bordo della **nave da ricerca GAIA BLU** (CNR-ISMAR), per acquisizione continua e validazione live di dati bio-ottici, fisici e GPS.
 
 ---
 
 ## 🛎️ Contatti
 
-> **Istituto di Scienze Marine - CNR**  
 > simone.colella@artov.ismar.cnr.it  
 > gianluca.volpe@artov.ismar.cnr.it  
 > jacopo.busatto@artov.ismar.cnr.it
-
----
-
-## ✏️ TODO
-
-- [ ] Esportazione automatica in formato NetCDF
-- [ ] Refactor: unificazione dei moduli `open_read_*` in una classe comune per strumenti seriali
-- [ ] Rilevamento automatico porte COM
-- [ ] Aggiunta interfaccia grafica leggera (es. Qt, Dash o Textual)
-- [ ] Integrazione sincronizzazione oraria con GPS (`GPS_TIME` -> `system clock`)
-- [ ] Logging anche su file `.log` oltre che terminale
-- [ ] Backup automatico su USB o rete locale
-- [ ] Test automatici per moduli di lettura e validazione dati
-- [ ] Setup script (`install.sh`, `requirements.txt`, `README.md` Git-ready)
-- [ ] Rimozione moduli legacy (`open_read_ac9.py`, `lanmux`) se non più necessari
-- [ ] Opzione debug interattivo per `acquisition.py`
