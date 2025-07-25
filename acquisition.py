@@ -12,6 +12,7 @@ from modules.config import (
     OUT_PATH, FILE_PREFIX, FILE_SUFFIX, MAX_TRIES, TRY_DELAY,
     ACS_LATENCY, SOCKET_PATH, PRESA_ACS
     )
+from logger_utils import log
 from math import isnan
 
 def ora_locale():
@@ -22,13 +23,13 @@ def aspetta_minuto_zero():
     while True:
         now = ora_locale()
         if now.minute == target_minute:
-            # print(f"[{now:%H:%M:%S}] Raggiunto minuto di start anticipato per latenza ACS ({ACS_LATENCY} min).", flush=True)
+            # log("acquisition", f"[{now:%H:%M:%S}] Raggiunto minuto di start anticipato per latenza ACS ({ACS_LATENCY} min).")
             return
         time.sleep(5)
 
 def main():
     now = ora_locale()
-    print(f"[LOOP] Avvio processo, in attesa del prossimo minuto {START_MINUTE:02d}...", flush = True)
+    log("acquisition", f"[LOOP] In attesa del prossimo minuto {START_MINUTE:02d}")
 
     while True:
         aspetta_minuto_zero()
@@ -41,11 +42,11 @@ def main():
                 if flusso is not None and flusso > 0:
                     break  # uscita anticipata se il flusso e' valido
             except Exception as e:
-                print(f"[{ora_locale():%H:%M:%S}] [CHECK] Errore lettura flusso (tentativo {i+1}): {e}", flush=True)
+                log("acquisition", f"[{ora_locale():%H:%M:%S}] [CHECK] Errore lettura flusso (tentativo {i+1}): {e}")
             time.sleep(TRY_DELAY)
 
         if flusso is None or flusso <= 0:
-            print(f" [CHECK] Flusso assente ({flusso}), acquisizione saltata.", flush=True)
+            log("acquisition", f" [CHECK] Flusso assente ({flusso}), acquisizione saltata.")
             time.sleep(120)
             continue
 
@@ -59,7 +60,7 @@ def main():
         scrivi_header(file_output)
         
         now = ora_locale()
-        print(f"[START] Scrittura su {file_output}", flush = True)
+        log("acquisition", f"[START] Scrittura su {file_output}")
 
         start_time = time.time()
         filtro_on  = False
@@ -76,7 +77,7 @@ def main():
                     os.system(f"{RELAY_PATH} {FILTER_ON}")
                     filtro_on = True
                     tot_dis = 1
-                    print(f"[RELAY] Valvola commutata --> FILTRO ON", flush=True)
+                    log("acquisition", f"[RELAY] Valvola commutata --> FILTRO ON")
 
 
                 # === Trigger filtro OFF al minuto 10
@@ -84,7 +85,7 @@ def main():
                     os.system(f"{RELAY_PATH} {FILTER_OFF}")
                     filtro_off = True
                     tot_dis = 0
-                    print(f"[RELAY] Valvola riportata alla posizione originale --> FILTRO OFF", flush = True)
+                    log("acquisition", f"[RELAY] Valvola riportata alla posizione originale --> FILTRO OFF")
 
                 # === ORDINE DEFINITO ===
                 record.update(get_gps_data())    # 1. GPS
@@ -111,14 +112,13 @@ def main():
                 appendi_riga(file_output, record)
 
         except KeyboardInterrupt:
-            #print("[STOP] Interruzione da tastiera.")
             os.system(f"{SOCKET_PATH} close {PRESA_ACS}")
             break
         
         os.system(f"{RELAY_PATH} {FILTER_OFF}")
         os.system(f"{SOCKET_PATH} close {PRESA_ACS}")
         
-        print(f"[END] Acquisizione terminata. In attesa del prossimo ciclo...", flush = True)
+        print(f"[END] Acquisizione terminata. In attesa del prossimo ciclo al minuto {START_MINUTE:02d}.", flush = True)
         
 if __name__ == "__main__":
     main()

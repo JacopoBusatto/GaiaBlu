@@ -6,7 +6,7 @@
 - regola accensione/spegnimento strumenti via **prese USB controllabili** e **relay**;
 - avvia e termina l’acquisizione in base alla **distanza dalla costa**;
 - salva file di dati con header compatibile IDL e **visualizza** i dati in tempo reale;
-- registra log **colorati** centralizzati per debugging e diagnostica.
+- registra log **colorati** e su file rotanti per debugging e diagnostica.
 
 ---
 
@@ -18,7 +18,7 @@
 |--------|----------|
 | `manager.py` | Controlla l’intero sistema: avvia `acquisition.py` e `plot_nrt.py` se la nave è lontana dalla costa. Spegne strumenti se troppo vicina. |
 | `acquisition.py` | Legge dati da tutti gli strumenti, regola la valvola filtro e salva i dati su file con header IDL. |
-| `plot_nrt.py` | Visualizza in tempo reale: <br> - serie temporali (C443.7, A441.6) <br> - spettri ACS (A(λ), C(λ)) |
+| `plot_nrt.py` | Visualizza in tempo reale: <br> - serie temporali (C443.7, A441.6) <br> - spettri ACS (A(lambda), C(lambda)) |
 
 ### 2. 🛂 Lettura strumenti (in `open_read_*.py`)
 
@@ -40,7 +40,7 @@ Ogni modulo fornisce `open_port()`, `read_data()`, `close_port()`.
 | Modulo | Funzione |
 |--------|----------|
 | `checkports.py` | Geocodifica lat/lon dei porti mancanti usando OpenStreetMap (Nominatim) |
-| `logger_utils.py` | Log con colori per manager / plot / acquisition / errori |
+| `logger_utils.py` | Log colorati su console **e** rotazione automatica su file (`flowthrough.log`) |
 | `writer.py` | Scrive file output con intestazione IDL e dati da tutti gli strumenti |
 | `read_*_data.py` | Wrapper per parsing dei dati letti da ciascun strumento |
 | `config.py` | Parametri configurabili del sistema |
@@ -65,12 +65,6 @@ mamba install pandas matplotlib numpy pyserial colorama geopy
 ---
 
 ## ▶️ Uso
-```manager.py```
-Esegue automaticamente:
-- verifica distanza dalla costa;
-- accensione prese;
-- avvio acquisizione dati e plotting;
-- spegnimento se troppo vicini a un porto.
 
 ```bash
 python manager.py  # avvio automatico completo

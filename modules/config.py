@@ -32,6 +32,7 @@ PRESA_FLUX = "02"     # Presa che controlla il flussimetro
 # Cartelle di output e dati
 OUT_PATH    = "C:/Users/ridopoco/GaiaBlu/acquisizioni/"    # Dove salvare i file di acquisizione
 DATA_PATH   = "C:/Users/ridopoco/GaiaBlu/data/"            # Dove si trovano shapefile e porti
+LOG_PATH    = "C:/Users/ridopoco/GaiaBlu/log/"             # Dove vengono salvati i file di log
 
 # File per coastlines e lista porti
 COASTLINE_PATH = f"{DATA_PATH}gshhs.shp"       # Shapefile delle coste
