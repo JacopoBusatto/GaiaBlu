@@ -7,6 +7,9 @@ from colorama import init
 from modules.config import LOG_PATH
 
 init()
+if os.name == 'nt':
+    import colorama
+    colorama.just_fix_windows_console()
 
 # === ANSI colori per terminale ===
 COLORS = {
@@ -17,31 +20,23 @@ COLORS = {
     "reset": "\033[0m"
 }
 
-# === FILE logger (solo file!) ===
 os.makedirs(LOG_PATH, exist_ok=True)
 LOG_FILE = os.path.join(LOG_PATH, "flowthrough.log")
 
 file_logger = logging.getLogger("filelog")
 file_logger.setLevel(logging.INFO)
-
 file_handler = TimedRotatingFileHandler(
     LOG_FILE, when="midnight", interval=1, backupCount=7, encoding="utf-8"
 )
 file_handler.setFormatter(logging.Formatter('[%(asctime)s] [%(name)s] %(message)s'))
+file_logger.addHandler(file_handler)
 
-if not file_logger.handlers:
-    file_logger.addHandler(file_handler)
-
-# === Logger pubblico ===
 def log(source, message, error=False):
     timestamp = datetime.utcnow().isoformat(timespec="seconds")
     color = COLORS["error"] if error else COLORS.get(source, "")
     reset = COLORS["reset"]
     formatted = f"[{timestamp}] [{source.upper()}] {message}"
-
-    # Stampa su console con colori (come prima)
     print(f"{color}{formatted}{reset}", file=sys.stderr if error else sys.stdout)
-
     # Scrive sul file di log rotante
     sublogger = file_logger.getChild(source)
     if error:

@@ -23,7 +23,7 @@ def aspetta_minuto_zero():
     while True:
         now = ora_locale()
         if now.minute == target_minute:
-            # log("acquisition", f"[{now:%H:%M:%S}] Raggiunto minuto di start anticipato per latenza ACS ({ACS_LATENCY} min).")
+            # log("acquisition", f" Raggiunto minuto di start anticipato per latenza ACS ({ACS_LATENCY} min).")
             return
         time.sleep(5)
 
@@ -42,11 +42,11 @@ def main():
                 if flusso is not None and flusso > 0:
                     break  # uscita anticipata se il flusso e' valido
             except Exception as e:
-                log("acquisition", f"[{ora_locale():%H:%M:%S}] [CHECK] Errore lettura flusso (tentativo {i+1}): {e}")
+                log("acquisition", f"[CHECK] Errore lettura flusso (tentativo {i+1}): {e}")
             time.sleep(TRY_DELAY)
 
         if flusso is None or flusso <= 0:
-            log("acquisition", f" [CHECK] Flusso assente ({flusso}), acquisizione saltata.")
+            log("acquisition", f"[CHECK] Flusso assente ({flusso}), acquisizione saltata.")
             time.sleep(120)
             continue
 
@@ -107,7 +107,7 @@ def main():
                     record["TOT_DIS"] = tot_dis
                     appendi_riga(file_output, record)
                 # else:
-                #     print(f"[{now:%H:%M:%S}] [WARN] Riga scartata per presenza di NaN o valori nulli", flush=True)
+                #     print(f"[WARN] Riga scartata per presenza di NaN o valori nulli", flush=True)
 
                 appendi_riga(file_output, record)
 
