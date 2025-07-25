@@ -1,15 +1,15 @@
 ## TO DO LIST
 
-1) gestione tensione strumentazione da py
-	1.1 spostare prese
-	1.2 collegarle al sistema
-	1.3 togliere tensione quando in attesa
+FATTO 1) gestione tensione strumentazione da py
+FATTO	1.1 spostare prese
+FATTO 	1.2 collegarle al sistema
+FATTO	1.3 togliere tensione quando in attesa
 2) gestione output di attesa (barra mobile/scrittura log/temporizzazione output piu lenta..)
-	2.1 si deve spegnere e accendere ad una certa distanza da costa 
+FATTO	2.1 si deve spegnere e accendere ad una certa distanza da costa 
 FATTO 3) calcolo distanza da costa 
 FATTO 	3.1 scaricare land-sea mask
 4) gestione strumenti in base al tempo di flusso 
-5) controllo nel manager del tempo: SE START MINUTE è 50 e acquisisco per 15 mins, allora il tempo massimo è minore e non funziona il check acquisizione
+FATTO 5) controllo nel manager del tempo: SE START MINUTE è 50 e acquisisco per 15 mins, allora il tempo massimo è minore e non funziona il check acquisizione
 6) tempi di invecchiamento del filtro
 END) al termine dell'acquisizione, spostare pc in server room
 SE SALTA LAQUISIZIONE PER IL FLUSSO, PUO LEGGERE DA GPS non da file
