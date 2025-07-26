@@ -26,6 +26,7 @@ Thumbs.db
 # Ignora tutto nella cartella data/ e aquisizioni/
 data/*
 acquisizioni/*.txt
+log/*
 
 # Tranne lista_porti.csv
 !data/lista_porti.csv
