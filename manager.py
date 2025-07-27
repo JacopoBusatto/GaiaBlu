@@ -61,11 +61,11 @@ def start_plot():
 
 def stream_output(process, name):
     for line in process.stdout:
-        log(name, line.strip(), error=False)
+        log(name, line.strip())
 
 def stream_logs(process, name):
     for line in process.stderr:
-        log(name, line.strip(), error=True)
+        log(name, f"[STDERR] {line.strip()}")
 
 def manager_loop():
     proc_acquisition = None
@@ -73,9 +73,7 @@ def manager_loop():
     old_distance = None
     try:
         while True:
-            # === Acquisizione posizione ===
             if is_acquiring():
-                # log("manager", "Fase di acquisizione. Leggo da file output...")
                 path = get_last_output_file()
                 if not path:
                     log("manager", "Nessun file trovato.")
@@ -88,7 +86,6 @@ def manager_loop():
                     continue
                 lat, lon = pos
             else:
-                # log("manager", "Fase di attesa. Leggo da GPS...")
                 gps = get_gps_data()
                 lat, lon = gps.get("LAT"), gps.get("LON")
 
@@ -111,7 +108,6 @@ def manager_loop():
                     proc_plot.terminate()
                     log("manager", "plot_nrt.py terminato.")
                     proc_plot = None
-                # QUI SPENGO ACS e FLUX
                 os.system(f"{SOCKET_PATH} close {PRESA_ACS}")
                 os.system(f"{SOCKET_PATH} close {PRESA_FLUX}")
 
@@ -121,7 +117,6 @@ def manager_loop():
                         log("manager", f"Distanza dal porto di {porto} adeguata: {distanza} NM")
                         log("manager",  "Accendo ACS e avvio acquisizione.")
                     os.system(f"{SOCKET_PATH} open {PRESA_FLUX}")
-                    # os.system(f"{SOCKET_PATH} open {PRESA_ACS}")
                     time.sleep(2)
                     
                     proc_acquisition = start_acquisition()
@@ -131,7 +126,8 @@ def manager_loop():
                 if (not proc_plot) or (proc_plot.poll() is not None):
                     proc_plot = start_plot()
                     threading.Thread(target=stream_logs, args=(proc_plot, "plot"), daemon=True).start()
-            old_distance = round(distanza,1)
+
+            old_distance = round(distanza, 1)
             time.sleep(CHECK_INTERVAL)
 
     except KeyboardInterrupt:

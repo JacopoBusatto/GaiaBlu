@@ -32,7 +32,6 @@ PRESA_FLUX = "02"     # Presa che controlla il flussimetro
 # Cartelle di output e dati
 OUT_PATH    = "C:/Users/ridopoco/GaiaBlu/acquisizioni/"    # Dove salvare i file di acquisizione
 DATA_PATH   = "C:/Users/ridopoco/GaiaBlu/data/"            # Dove si trovano shapefile e porti
-LOG_PATH    = "C:/Users/ridopoco/GaiaBlu/log/"             # Dove vengono salvati i file di log
 
 # File per coastlines e lista porti
 COASTLINE_PATH = f"{DATA_PATH}gshhs.shp"       # Shapefile delle coste
@@ -67,3 +66,7 @@ SOGLIA_NM = 1.0  # 0.0 → sempre attivo; >0 → parte solo quando lontani da co
 # Frequenza con cui controllare la distanza dalla costa (secondi)
 CHECK_INTERVAL = 60
 
+# === Log ===
+LOG_PATH            = "C:/Users/ridopoco/GaiaBlu/log/"             # Dove vengono salvati i file di log
+LOG_CLEANUP_ENABLED = True                                         # Se False, non cancella mai i vecchi log
+LOG_RETENTION_DAYS  = 7                                            # Numero di giorni da mantenere se cleanup è abilitato

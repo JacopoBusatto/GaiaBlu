@@ -1,45 +1,105 @@
-import sys
+# logger_utils.py
 import os
-from datetime import datetime
+import sys
 import logging
-from logging.handlers import TimedRotatingFileHandler
-from colorama import init
-from modules.config import LOG_PATH
+from datetime import datetime, timedelta
+from colorama import init, Fore, Style
+from modules.config import LOG_PATH, LOG_CLEANUP_ENABLED, LOG_RETENTION_DAYS
 
-init()
-if os.name == 'nt':
-    import colorama
-    colorama.just_fix_windows_console()
+init()  # Abilita colori ANSI su Windows
 
-# === ANSI colori per terminale ===
+# === Colori terminale ===
 COLORS = {
-    "manager": "\033[94m",      # blu
-    "acquisition": "\033[92m",  # verde
-    "plot": "\033[93m",         # giallo
-    "error": "\033[91m",        # rosso
-    "reset": "\033[0m"
+    "manager": Fore.BLUE,
+    "acquisition": Fore.GREEN,
+    "plot": Fore.YELLOW,
+    "error": Fore.RED,
+    "reset": Style.RESET_ALL
 }
 
-os.makedirs(LOG_PATH, exist_ok=True)
-LOG_FILE = os.path.join(LOG_PATH, "flowthrough.log")
+# === Formatter console colorato ===
+class ColorFormatter(logging.Formatter):
+    def format(self, record):
+        source = record.name
+        color = COLORS.get(source, "")
+        reset = COLORS["reset"]
+        timestamp = datetime.now().strftime("%Y-%m-%dT%H:%M:%S")
+        return f"{color}[{timestamp}] [{source.upper()}] {record.getMessage()}{reset}"
 
-file_logger = logging.getLogger("filelog")
-file_logger.setLevel(logging.INFO)
-file_handler = TimedRotatingFileHandler(
-    LOG_FILE, when="midnight", interval=1, backupCount=7, encoding="utf-8"
-)
-file_handler.setFormatter(logging.Formatter('[%(asctime)s] [%(name)s] %(message)s'))
-file_logger.addHandler(file_handler)
+# === Handler personalizzato che cambia file ogni giorno e cancella log vecchi ===
+class DailyFileHandler(logging.Handler):
+    def __init__(self, folder, base_filename="flowthrough", days_to_keep=None):
+        super().__init__()
+        self.folder = folder
+        self.base_filename = base_filename
+        self.days_to_keep = days_to_keep
+        self.formatter = logging.Formatter("[%(asctime)s] [%(name)s] %(message)s", datefmt="%Y-%m-%dT%H:%M:%S")
+        self.current_date = None
+        self.file = None
+        self._rotate_if_needed()
 
-def log(source, message, error=False):
-    timestamp = datetime.utcnow().isoformat(timespec="seconds")
-    color = COLORS["error"] if error else COLORS.get(source, "")
-    reset = COLORS["reset"]
-    formatted = f"[{timestamp}] [{source.upper()}] {message}"
-    print(f"{color}{formatted}{reset}", file=sys.stderr if error else sys.stdout)
-    # Scrive sul file di log rotante
-    sublogger = file_logger.getChild(source)
-    if error:
-        sublogger.error(message)
-    else:
-        sublogger.info(message)
+    def _rotate_if_needed(self):
+        today = datetime.now().strftime("%Y-%m-%d")
+        if today != self.current_date:
+            self.current_date = today
+            if self.file:
+                self.file.close()
+            log_path = os.path.join(self.folder, f"{self.base_filename}_{today}.log")
+            self.file = open(log_path, "a", encoding="utf-8")
+            self._cleanup_old_logs()
+
+    def _cleanup_old_logs(self):
+        if self.days_to_keep is None:
+            return  # pulizia disabilitata
+        cutoff = datetime.now() - timedelta(days=self.days_to_keep)
+        for fname in os.listdir(self.folder):
+            if fname.startswith(self.base_filename) and fname.endswith(".log"):
+                date_part = fname.replace(self.base_filename + "_", "").replace(".log", "")
+                try:
+                    file_date = datetime.strptime(date_part, "%Y-%m-%d")
+                    if file_date < cutoff:
+                        os.remove(os.path.join(self.folder, fname))
+                except ValueError:
+                    continue
+
+    def emit(self, record):
+        self._rotate_if_needed()
+        msg = self.formatter.format(record)
+        self.file.write(msg + "\n")
+        self.file.flush()
+
+    def close(self):
+        if self.file:
+            self.file.close()
+        super().close()
+
+# === Cache dei logger già creati ===
+loggers = {}
+
+def log(source: str, message: str):
+    """
+    Logger centralizzato per ogni componente (manager, acquisition, plot, ecc.)
+    Ogni processo ha la sua cartella, e ogni giorno un nuovo file.
+    """
+    if source not in loggers:
+        logger = logging.getLogger(source)
+        logger.setLevel(logging.INFO)
+
+        # Console handler colorato
+        ch = logging.StreamHandler(sys.stdout)
+        ch.setFormatter(ColorFormatter())
+        logger.addHandler(ch)
+
+        # File handler personalizzato
+        folder = os.path.join(LOG_PATH, source)
+        os.makedirs(folder, exist_ok=True)
+        fh = DailyFileHandler(
+            folder,
+            base_filename="flowthrough",
+            days_to_keep=LOG_RETENTION_DAYS if LOG_CLEANUP_ENABLED else None
+        )
+        logger.addHandler(fh)
+
+        loggers[source] = logger
+
+    loggers[source].info(message)
