@@ -99,7 +99,8 @@ def manager_loop():
                 log("manager", f"Distanza da {porto}: {distanza} NM")
 
             if distanza < SOGLIA_NM:
-                log("manager", f"Troppo vicino al porto di {porto}: {distanza} NM! Fermo acquisizione e spengo ACS!")
+                if datetime.now().minute() % 5 == 0:
+                    log("manager", f"Troppo vicino al porto di {porto}: {distanza} NM! Fermo acquisizione e spengo ACS!")
                 if proc_acquisition and proc_acquisition.poll() is None:
                     proc_acquisition.terminate()
                     log("manager", "acquisition.py terminato.")
