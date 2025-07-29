@@ -2,7 +2,7 @@ import subprocess
 import time
 import os
 import threading
-from datetime import datetime
+from datetime import datetime, timezone
 from modules.config import (
     OUT_PATH, FILE_PREFIX, FILE_SUFFIX,
     START_MINUTE, ACQUISITION_LENGTH, SOGLIA_NM,
@@ -95,13 +95,14 @@ def manager_loop():
                 continue
 
             porto, distanza = distanza_dal_porto(lat, lon)
-            thisMinute = datetime.now().minute()
+            thisMinute = datetime.now(timezone.utc).minute
 
-            if distanza < 2 * SOGLIA_NM:
+            if distanza < 3 * SOGLIA_NM:
                 checkMinimumDistanceInterval = CHECK_INTERVAL
                 log("manager", f"Distanza dal porto di {porto}: {distanza} NM")
             else:
-                checkMinimumDistanceInterval = 5 * CHECK_INTERVAL
+                factor = min([20, distanza / SOGLIA_NM])
+                checkMinimumDistanceInterval = factor * CHECK_INTERVAL
 
             if distanza < SOGLIA_NM:
                 if thisMinute % 10 == 0:

@@ -61,7 +61,7 @@ INITIAL_SLEEP = 0.05
 # ============================ CONDIZIONE DI NAVIGAZIONE ============================
 
 # Soglia di distanza minima (in miglia nautiche) dal porto più vicino per avviare acquisizione
-SOGLIA_NM = 1.0  # 0.0 → sempre attivo; >0 → parte solo quando lontani da costa
+SOGLIA_NM = 1.  # 0.0 → sempre attivo; >0 → parte solo quando lontani da costa
 
 # Frequenza con cui controllare la distanza dalla costa (secondi)
 CHECK_INTERVAL = 60
