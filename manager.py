@@ -95,11 +95,16 @@ def manager_loop():
                 continue
 
             porto, distanza = distanza_dal_porto(lat, lon)
+            thisMinute = datetime.now().minute()
+
             if distanza < 2 * SOGLIA_NM:
-                log("manager", f"Distanza da {porto}: {distanza} NM")
+                checkMinimumDistanceInterval = CHECK_INTERVAL
+                log("manager", f"Distanza dal porto di {porto}: {distanza} NM")
+            else:
+                checkMinimumDistanceInterval = 5 * CHECK_INTERVAL
 
             if distanza < SOGLIA_NM:
-                if datetime.now().minute() % 5 == 0:
+                if thisMinute % 10 == 0:
                     log("manager", f"Troppo vicino al porto di {porto}: {distanza} NM! Fermo acquisizione e spengo ACS!")
                 if proc_acquisition and proc_acquisition.poll() is None:
                     proc_acquisition.terminate()
@@ -129,7 +134,7 @@ def manager_loop():
                     threading.Thread(target=stream_logs, args=(proc_plot, "plot"), daemon=True).start()
 
             old_distance = round(distanza, 1)
-            time.sleep(CHECK_INTERVAL)
+            time.sleep(checkMinimumDistanceInterval)
 
     except KeyboardInterrupt:
         log("manager", "Interruzione manuale.")
